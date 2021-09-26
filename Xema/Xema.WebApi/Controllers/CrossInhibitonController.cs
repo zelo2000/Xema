@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Threading.Tasks;
 using Xema.Services.Infrastructure;
 
 namespace Xema.WebApi.Controllers
@@ -16,8 +17,9 @@ namespace Xema.WebApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult ProcessFile(IFormFile file)
+        public async Task<IActionResult> ProcessFile(IFormFile file)
         {
+            await _crossInhibitionService.ProcessFile(file);
             return Ok();
         }
     }

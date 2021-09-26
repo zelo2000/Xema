@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
 
 namespace Xema.Services.Infrastructure
 {
     public interface ICrossInhibitionService
     {
-        void ProcessFile(IFormFile file);
+        Task ProcessFile(IFormFile file);
     }
 }

@@ -1,15 +1,25 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Xema.Services.Infrastructure;
 
 namespace Xema.Services
 {
     public class CrossInhibitonSevice : ICrossInhibitionService
     {
-        public void ProcessFile(IFormFile file)
+        public async Task ProcessFile(IFormFile file)
         {
-            throw new System.NotImplementedException();
+            var result = new List<List<string>>();
+            using var reader = new StreamReader(file.OpenReadStream());
+            while (reader.Peek() >= 0)
+            {
+                var line = await reader.ReadLineAsync();
+                result.Add(line.Split(';').ToList());
+            }
+
         }
 
         public static int Mark(double cellValue, double maxValue, List<double> marks)
