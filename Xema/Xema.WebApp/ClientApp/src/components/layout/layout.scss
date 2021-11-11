@@ -1,0 +1,27 @@
+$header-height: 56px;
+
+.site-layout-content {
+  height: calc(100vh - $header-height - 54px);
+  padding: 24px;
+  background: #fff;
+}
+
+.footer {
+  text-align: center;
+  padding: 16px 50px;
+}
+
+.header {
+  height: $header-height;
+  line-height: $header-height;
+
+  .logo-container {
+    padding-right: 50px;
+  }
+
+  .logo-container .logo {
+    color: white;
+    font-size: 1.4rem;
+    line-height: $header-height;
+  }
+}

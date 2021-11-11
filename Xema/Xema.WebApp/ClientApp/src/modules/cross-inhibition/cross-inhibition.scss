@@ -1,0 +1,23 @@
+.table-header {
+  margin-top: 0.5rem;
+}
+
+.cross-inhibition-table {
+  .index-tag {
+    min-width: 50px;
+    text-align: center;
+  }
+
+  .ant-table-cell {
+    padding: 4px 8px;
+  }
+}
+
+.ant-upload-list.ant-upload-list-text {
+  display: inline-block;
+
+  .ant-upload-list-item.ant-upload-list-item-done.ant-upload-list-item-list-type-text {
+    margin-top: 0;
+    margin-left: 16px;
+  }
+}
