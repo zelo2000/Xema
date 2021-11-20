@@ -6,6 +6,8 @@ namespace Xema.Core.Models
     {
         public double Value { get; set; }
 
-        public InhibitionColors MarkerIndex { get; set; }
+        public double MarkerIndex { get; set; }
+
+        public InhibitionColors MarkerColor { get; set; }
     }
 }

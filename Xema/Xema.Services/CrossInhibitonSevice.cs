@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Xema.Core.Enums;
 using Xema.Core.Models;
@@ -53,13 +55,8 @@ namespace Xema.Services
                                 var isParsed = double.TryParse(splitedLine[i], out var n);
                                 if (isParsed)
                                 {
-                                    var incexCell = new IndexCell
-                                    {
-                                        Value = n,
-                                        MarkerIndex = DrawCell(n, crossInhibitorRawDataModel.BlankIndexes[i]),
-                                    };
-
-                                    lineInhibitonIndexes.Add(incexCell);
+                                    var cell = DrawCell(n, crossInhibitorRawDataModel.BlankIndexes[i]);
+                                    lineInhibitonIndexes.Add(cell);
                                 }
                             }
 
@@ -74,23 +71,59 @@ namespace Xema.Services
                 }
             }
 
+            WriteCellPropertyToFile(crossInhibitorRawDataModel, "drawn_color.csv");
+            WriteCellPropertyToFile(crossInhibitorRawDataModel, "drawn_index.csv", true);
+
             return crossInhibitorRawDataModel;
         }
 
-        private static InhibitionColors DrawCell(double cellValue, double maxValue)
+        private IndexCell DrawCell(double cellValue, double maxValue)
         {
-            var index = (maxValue - cellValue) / maxValue;
+            var cell = new IndexCell
+            {
+                Value = cellValue
+            };
 
+            var index = (maxValue - cell.Value) / maxValue;
+
+            cell.MarkerIndex = Math.Round(index, 2);
             if (index > 0.75)
             {
-                return InhibitionColors.DarkGreen;
+                cell.MarkerColor = InhibitionColors.DarkGreen;
             }
             else if (index > 0.5)
             {
-                return InhibitionColors.LightGreen;
+                cell.MarkerColor = InhibitionColors.LightGreen;
+            }
+            else
+            {
+                cell.MarkerColor = InhibitionColors.White;
             }
 
-            return InhibitionColors.White;
+            return cell;
+        }
+
+        private void WriteCellPropertyToFile(CrossInhibitorRawDataModel model, string path, bool isIndex = false)
+        {
+            if (!File.Exists(path))
+            {
+                File.Create(path).Close();
+            }
+
+            var stringBuilder = new StringBuilder();
+            stringBuilder.AppendLine("label," + string.Join(',', model.MarkedAntigenLabels));
+
+            for (var i = 0; i < model.AntigenLabels.Count; i++)
+            {
+                stringBuilder.Append(model.AntigenLabels[i]);
+                stringBuilder.Append(',');
+                var indexes = model.CrossInhibitionIndexes[i]
+                    .Select(x => isIndex ? x.MarkerIndex : (int)x.MarkerColor);
+                stringBuilder.Append(string.Join(',', indexes));
+                stringBuilder.AppendLine();
+            }
+
+            File.WriteAllText(path, stringBuilder.ToString());
         }
     }
 }

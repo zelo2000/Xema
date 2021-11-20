@@ -44,9 +44,9 @@ const CrossInhibition: FC = () => {
         title: label,
         dataIndex: jIndex,
         render: (value: CrossInhibitonIndexCell, record: CrossInhibitonIndexCell[], iIndex: number) => {
-          const color = value?.markerIndex === InhibitionColors.DarkGreen
+          const color = value?.markerColor === InhibitionColors.DarkGreen
             ? "#00b04f"
-            : (value?.markerIndex === InhibitionColors.LightGreen ? "#92d050" : undefined);
+            : (value?.markerColor === InhibitionColors.LightGreen ? "#92d050" : undefined);
 
           return (
             <Tag
