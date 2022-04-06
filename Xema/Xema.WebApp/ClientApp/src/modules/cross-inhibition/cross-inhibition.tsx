@@ -1,5 +1,5 @@
 import React, { FC, useCallback, useMemo, useState } from 'react';
-import { Button, Upload, Col, Row, message, Typography, Tag, Table, Empty } from 'antd';
+import { Button, Upload, Col, Row, message, Typography, Tag, Table, Empty, Tree, Spin } from 'antd';
 import { RcFile } from 'antd/lib/upload';
 import { ColumnType } from 'antd/lib/table';
 import { UploadOutlined } from '@ant-design/icons';
@@ -10,22 +10,45 @@ import { CrossInhibitonIndexCell } from '../../types/cross-inhibiton-index-cell'
 import { InhibitionColors } from '../../types/enums/InhibitionColors';
 
 import './cross-inhibition.scss';
+import { DataNode } from 'antd/lib/tree';
 
 const CrossInhibition: FC = () => {
   const [parseResult, setParsedResult] = useState<CrossInhibitonRawDataModel>();
+  const [clusters, setClusters] = useState<DataNode[]>();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const handleSubmit = useCallback((value) => {
-    console.log(value);
+    setLoading(true);
     const formData = new FormData();
     formData.append('file', value.file);
 
     uploadFileApi(formData).then(responce => {
       setParsedResult(responce);
+      const clusters = mapClusters(responce.clusters);
+      setClusters(clusters);
       value.onSuccess();
+      setLoading(false);
     }).catch((error) => {
       value.onError(error);
+      setLoading(false);
     });
   }, []);
+
+  const mapClusters = (clusters: { [key: number]: string[] }) => {
+    const result = Object.keys(clusters).map(key => {
+      const intKey = parseInt(key, 10)
+      return {
+        title: `Group ${intKey + 1}`,
+        key: key,
+        children: [{
+          title: clusters[intKey].join(', '),
+          key: `children-${key}`
+        }]
+      }
+    });
+
+    return result;
+  }
 
   const beforeUpload = (file: RcFile) => {
     const extensions = ['application/vnd.ms-excel', 'test/csv'];
@@ -97,20 +120,27 @@ const CrossInhibition: FC = () => {
         </Col>
       </Row>
 
-      <Typography.Title level={2} className="table-header">Cross inhibition raw data</Typography.Title>
+      <Spin spinning={loading}>
+        <Typography.Title level={4} className="table-header">Antigen by groups</Typography.Title>
+        <Row>
+          <Tree treeData={clusters} expandedKeys={Object.keys(clusters || [])} />
+        </Row>
 
-      <Row justify="center">
-        {parseResult
-          ? <Table
-            className="cross-inhibition-table"
-            columns={column}
-            dataSource={parseResult.crossInhibitionIndexes}
-            pagination={false}
-            scroll={{ x: 1200 }}
-          />
-          : <Empty />
-        }
-      </Row>
+        <Typography.Title level={4} className="table-header">Cross inhibition data</Typography.Title>
+        <Row justify="center">
+          {parseResult
+            ? <Table
+              className="cross-inhibition-table"
+              columns={column}
+              dataSource={parseResult.crossInhibitionIndexes}
+              pagination={false}
+              scroll={{ x: 1200 }}
+            />
+            : <Empty />
+          }
+        </Row>
+      </Spin>
+
     </div>
   );
 }

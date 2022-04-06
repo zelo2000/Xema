@@ -6,6 +6,6 @@ namespace Xema.Services.Infrastructure
 {
     public interface ICrossInhibitionService
     {
-        Task<CrossInhibitorRawDataModel> UploadFile(IFormFile file);
+        Task<CrossInhibitorRawDataModel> Cluster(IFormFile file);
     }
 }

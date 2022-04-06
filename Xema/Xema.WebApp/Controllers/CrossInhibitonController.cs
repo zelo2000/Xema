@@ -20,7 +20,7 @@ namespace Xema.WebApi.Controllers
         [HttpPost]
         public async Task<ActionResult<CrossInhibitorRawDataModel>> UploadFile([FromForm] IFormFile file)
         {
-            var result = await _crossInhibitionService.UploadFile(file);
+            var result = await _crossInhibitionService.Cluster(file);
             return Ok(result);
         }
     }

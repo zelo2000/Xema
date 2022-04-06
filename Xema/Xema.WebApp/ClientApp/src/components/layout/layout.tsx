@@ -2,7 +2,7 @@ import React, { FC, ReactNode } from 'react';
 import { Col, Layout, Menu, Row } from 'antd';
 import './layout.scss';
 
-const { Header, Content, Footer } = Layout;
+const { Header, Content } = Layout;
 
 const CustomLayout: FC<{ children: ReactNode }> = ({ children }: { children: ReactNode }) => {
   return (
@@ -26,7 +26,7 @@ const CustomLayout: FC<{ children: ReactNode }> = ({ children }: { children: Rea
         <div className="site-layout-content">{children}</div>
       </Content>
 
-      <Footer className="footer">YaZOKP Software ©2021 Created by Oleksandr Zelinskyi</Footer>
+      {/* <Footer className="footer">YaZOKP Software ©2021 Created by Oleksandr Zelinskyi</Footer> */}
     </Layout>
   );
 };
