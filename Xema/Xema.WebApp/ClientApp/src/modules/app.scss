@@ -1,0 +1,33 @@
+@use "/src/modules/variables.scss" as variables;
+
+.ant-typography {
+  color: variables.$white;
+}
+
+h4.ant-typography {
+  color: variables.$white;
+}
+
+h5.ant-typography {
+  color: variables.$white;
+}
+
+.ant-spin-dot {
+  .ant-spin-dot-item {
+    background-color: variables.$green;
+  }
+}
+
+.ant-btn.ant-btn-primary {
+  background-color: variables.$green;
+  border: none;
+}
+
+.ant-btn-primary:hover,
+.ant-btn-primary:focus {
+  background-color: variables.$dark-green;
+}
+
+[ant-click-animating-without-extra-node="true"]::after {
+  display: none;
+}

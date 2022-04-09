@@ -3,9 +3,7 @@ import csv
 from fastapi import FastAPI, UploadFile, Response
 import pandas as pd
 from cluster_service import clustering
-from constants import cluster_column_name
 from file_processor import processFile
-from fastapi.encoders import jsonable_encoder
 
 app = FastAPI()
 
@@ -19,7 +17,7 @@ async def root():
 async def api_clustering(file: UploadFile):
     data_color = read_data_from_file(file)
     data = processFile(data_color)
-    clustered_data = clustering(data[2].copy(deep=True), app.debug)
+    clustered_data = clustering(data[2].copy(deep=True))
     response = prepare_response(data, clustered_data)
     return response
 

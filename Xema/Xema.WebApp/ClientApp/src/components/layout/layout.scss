@@ -1,27 +1,33 @@
+@use "/src/modules/variables.scss" as variables;
+
 $header-height: 56px;
 
 .site-layout-content {
-  height: calc(100vh - $header-height - 54px);
+  min-height: calc(100vh - $header-height);
   padding: 24px;
-  background: #fff;
-}
-
-.footer {
-  text-align: center;
-  padding: 16px 50px;
+  background-color: variables.$black;
 }
 
 .header {
   height: $header-height;
   line-height: $header-height;
+  background-color: variables.$green;
 
   .logo-container {
     padding-right: 50px;
+    line-height: initial;
+  }
+
+  .logo-container .logo-title {
+    height: 1.5rem;
   }
 
   .logo-container .logo {
-    color: white;
-    font-size: 1.4rem;
-    line-height: $header-height;
+    height: 2.25rem;
+    margin-right: 0.75rem;
+  }
+
+  .ant-menu.ant-menu-dark .ant-menu-item-selected {
+    background-color: variables.$dark-green;
   }
 }

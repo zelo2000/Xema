@@ -7,7 +7,7 @@ from kneed import KneeLocator  # pip install kneed
 
 from constants import cluster_column_name
 
-verbose = 1
+verbose = 0
 
 
 def setup_kmodes(num_clusters: int) -> KModes:
@@ -86,10 +86,9 @@ def format_response(data: pd.DataFrame, clusters: npt.NDArray[np.uint16]) -> pd.
     return data
 
 
-def clustering(data: pd.DataFrame, debug: bool) -> pd.DataFrame:
+def clustering(data: pd.DataFrame) -> pd.DataFrame:
     """
     Clustering data
-    :param debug:
     :param data: data to be clustered
     :return: json with clustered data
     """

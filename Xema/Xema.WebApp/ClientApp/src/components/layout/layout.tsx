@@ -8,10 +8,11 @@ const CustomLayout: FC<{ children: ReactNode }> = ({ children }: { children: Rea
   return (
     <Layout className="layout">
       <Header className="header">
-        <Row>
+        <Row align="middle">
           <Col>
             <div className="logo-container">
-              <span className="logo">Xema</span>
+              <img className="logo" src="https://xema.in.ua/wp-content/themes/xema-2.7/dist/assets/images/theme/xemaLogo.svg" alt=""></img>
+              <img className="logo-title" src="https://xema.in.ua/wp-content/themes/xema-2.7/dist/assets/images/theme/xemaLogoText.svg" alt="Xema Labs"></img>
             </div>
           </Col>
           <Col>
@@ -25,8 +26,6 @@ const CustomLayout: FC<{ children: ReactNode }> = ({ children }: { children: Rea
       <Content>
         <div className="site-layout-content">{children}</div>
       </Content>
-
-      {/* <Footer className="footer">YaZOKP Software ©2021 Created by Oleksandr Zelinskyi</Footer> */}
     </Layout>
   );
 };
