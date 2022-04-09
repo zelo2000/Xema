@@ -1,7 +1,9 @@
 import { FC, useEffect, useState } from 'react';
 import { Row, Typography, List, Card } from 'antd';
 import { toRoman } from 'roman-numerals'
-import { Clusters } from '../../../types/cross-inhibiton-raw-data-model';
+import { Clusters } from '../../../../types/cross-inhibiton-raw-data-model';
+
+import './cluster-result.scss';
 
 interface IClusterResultProps {
   data?: Clusters
@@ -33,7 +35,12 @@ const ClusterResult: FC<IClusterResultProps> = ({ data }: IClusterResultProps) =
           dataSource={localClusters}
           renderItem={(item, index) => (
             <List.Item>
-              <Card title={`Group ${toRoman(index + 1)}`}>{item.join(', ')}</Card>
+              <Card
+                title={`Group ${toRoman(index + 1)}`}
+                className="cluster-result-card"
+              >
+                {item.join(', ')}
+              </Card>
             </List.Item>
           )}
         />

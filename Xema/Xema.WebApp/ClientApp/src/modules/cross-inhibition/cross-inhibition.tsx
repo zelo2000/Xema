@@ -5,7 +5,7 @@ import { UploadOutlined } from '@ant-design/icons';
 
 import { uploadFileApi } from '../../api/cross-inhibition-api';
 import { CrossInhibitonRawDataModel } from './../../types/cross-inhibiton-raw-data-model';
-import ClusterResult from './component/cluster-result';
+import ClusterResult from './component/cluster-result/cluster-result';
 
 import './cross-inhibition.scss';
 import CrossInhibitionGrid from './component/cross-inhibition-grid/cross-inhibition-grid';

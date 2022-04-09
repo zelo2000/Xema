@@ -1,3 +1,5 @@
+@use "/src/modules/variables.scss" as variables;
+
 .ant-upload-list.ant-upload-list-text {
   display: inline-block;
 
@@ -12,6 +14,26 @@
 
   .ant-upload-list-item:hover .ant-upload-list-item-info {
     background-color: inherit;
+
+    .ant-upload-list-item-name {
+      text-decoration: underline;
+    }
+  }
+
+  .ant-upload-list-item.ant-upload-list-item-done.ant-upload-list-item-list-type-text {
+    color: variables.$white;
+
+    .ant-upload-text-icon {
+      .anticon {
+        color: variables.$white;
+      }
+    }
+
+    .ant-upload-list-item-card-actions {
+      .anticon {
+        color: variables.$white;
+      }
+    }
   }
 }
 

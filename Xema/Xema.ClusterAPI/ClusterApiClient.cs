@@ -58,8 +58,8 @@ namespace Xema.ClusterAPI
             var clusterResponce = JsonConvert.DeserializeObject<ClusterResponce>(responseAsString);
 
             // Map labels
-            var antigenLabels = clusterResponce.InitialValue.Keys.ToList();
-            var markedAntigenLabels = clusterResponce.InitialValue.FirstOrDefault().Value.Keys.ToList();
+            var antigenLabels = clusterResponce.Colors.Keys.ToList();
+            var markedAntigenLabels = clusterResponce.Colors.FirstOrDefault().Value.Keys.ToList();
 
             // Map clusters
             var clusters = new Dictionary<int, List<string>>();
@@ -81,10 +81,10 @@ namespace Xema.ClusterAPI
 
             // Map values
             var crossInhibitionIndexes = new List<List<IndexCell>>();
-            foreach (var antigenLabel in clusterResponce.InitialValue.Keys)
+            foreach (var antigenLabel in clusterResponce.Colors.Keys)
             {
                 var row = new List<IndexCell>();
-                foreach (var markedAntigenLabel in clusterResponce.InitialValue[antigenLabel].Keys)
+                foreach (var markedAntigenLabel in clusterResponce.Colors[antigenLabel].Keys)
                 {
                     var initialValue = clusterResponce.InitialValue[antigenLabel][markedAntigenLabel];
                     var index = clusterResponce.Indexes[antigenLabel][markedAntigenLabel];

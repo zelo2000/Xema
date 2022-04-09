@@ -3,6 +3,7 @@ import csv
 from fastapi import FastAPI, UploadFile, Response
 import pandas as pd
 from cluster_service import clustering
+from constants import cluster_column_name
 from file_processor import processFile
 
 app = FastAPI()
@@ -32,9 +33,10 @@ def read_data_from_file(file: UploadFile) -> pd.DataFrame:
 def prepare_response(data: tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame], clustered: pd.DataFrame) -> object:
     data_filtered = data[0].to_dict(orient="index")
     data_index = data[1].to_dict(orient="index")
-    data_color = data[2].to_dict(orient="index")
 
     clusters = clustered.iloc[:, 0].to_dict()
+
+    data_color = clustered.drop(cluster_column_name, axis=1).to_dict(orient="index")
 
     response = {
         "clusters": clusters,
