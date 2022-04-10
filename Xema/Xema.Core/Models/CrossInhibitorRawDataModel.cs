@@ -7,7 +7,7 @@ namespace Xema.Core.Models
         public List<string> AntigenLabels { get; set; }
         public List<string> MarkedAntigenLabels { get; set; }
 
-        public List<List<IndexCell>> CrossInhibitionIndexes { get; set; }
+        public List<List<List<IndexCell>>> CrossInhibitionIndexes { get; set; }
 
         public Dictionary<int, List<string>> Clusters { get; set; }
     }

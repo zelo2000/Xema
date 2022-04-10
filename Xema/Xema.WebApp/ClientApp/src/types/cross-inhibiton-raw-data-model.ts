@@ -5,6 +5,6 @@ export type Clusters = { [key: number]: string[] };
 export interface CrossInhibitonRawDataModel {
   antigenLabels: string[];
   markedAntigenLabels: string[];
-  crossInhibitionIndexes: (CrossInhibitonIndexCell[])[];
+  crossInhibitionIndexes: CrossInhibitonIndexCell[][][];
   clusters: Clusters
 }

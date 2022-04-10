@@ -1,10 +1,15 @@
 import React, { FC, ReactNode } from 'react';
-import { Col, Layout, Menu, Row } from 'antd';
+import { Col, Layout, Menu, Row, Spin } from 'antd';
 import './layout.scss';
 
 const { Header, Content } = Layout;
 
-const CustomLayout: FC<{ children: ReactNode }> = ({ children }: { children: ReactNode }) => {
+interface ICustomLayoutProps {
+  loading: boolean;
+  children: ReactNode;
+}
+
+const CustomLayout: FC<ICustomLayoutProps> = ({ children, loading }: ICustomLayoutProps) => {
   return (
     <Layout className="layout">
       <Header className="header">
@@ -23,9 +28,11 @@ const CustomLayout: FC<{ children: ReactNode }> = ({ children }: { children: Rea
         </Row>
       </Header>
 
-      <Content>
-        <div className="site-layout-content">{children}</div>
-      </Content>
+      <Spin spinning={loading} size="large">
+        <Content>
+          <div className="site-layout-content">{children}</div>
+        </Content>
+      </Spin>
     </Layout>
   );
 };

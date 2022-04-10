@@ -1,0 +1,32 @@
+@use "/src/modules/variables.scss" as variables;
+
+$table-background: #373737;
+$cell-background: #535353;
+
+.cross-inhibition-table {
+  .ant-table {
+    background: $table-background;
+  }
+
+  .index-tag {
+    min-width: 50px;
+    text-align: center;
+    color: variables.$black;
+    background-color: $cell-background;
+    border: none;
+  }
+
+  .ant-table-cell {
+    padding: 4px 8px;
+  }
+
+  .ant-table-cell.ant-table-cell-fix-left {
+    color: variables.$light-green;
+    background: $table-background;
+  }
+
+  .ant-table-thead > tr > th {
+    color: variables.$light-green;
+    background: $table-background;
+  }
+}

@@ -1,5 +1,9 @@
 @use "/src/modules/variables.scss" as variables;
 
+body {
+  font-family: cursive;
+}
+
 .ant-typography {
   color: variables.$white;
 }

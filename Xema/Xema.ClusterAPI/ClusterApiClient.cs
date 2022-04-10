@@ -80,7 +80,13 @@ namespace Xema.ClusterAPI
             }
 
             // Map values
-            var crossInhibitionIndexes = new List<List<IndexCell>>();
+            var crossInhibitionIndexes = new List<List<List<IndexCell>>>();
+
+            foreach (var key in clusters.Keys)
+            {
+                crossInhibitionIndexes.Add(new List<List<IndexCell>>());
+            }
+
             foreach (var antigenLabel in clusterResponce.Colors.Keys)
             {
                 var row = new List<IndexCell>();
@@ -100,7 +106,8 @@ namespace Xema.ClusterAPI
                     row.Add(cell);
                 }
 
-                crossInhibitionIndexes.Add(row);
+                var clusterIndex = clusterResponce.Clusters[antigenLabel];
+                crossInhibitionIndexes[clusterIndex].Add(row);
             }
 
             var result = new CrossInhibitorRawDataModel
