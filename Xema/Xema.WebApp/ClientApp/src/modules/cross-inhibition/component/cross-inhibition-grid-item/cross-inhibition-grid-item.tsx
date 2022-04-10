@@ -62,7 +62,7 @@ const CrossInhibitionGridItem: FC<ICrossInhibitionGridItemProps> = ({
       columns={column}
       dataSource={crossInhibitionIndexes}
       pagination={false}
-      scroll={{ x: 2800 }}
+      scroll={{ x: (markedAntigenLabels.length || 0) * 72 }}
     />
   );
 }

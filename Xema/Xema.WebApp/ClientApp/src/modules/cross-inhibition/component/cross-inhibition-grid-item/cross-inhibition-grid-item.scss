@@ -9,7 +9,8 @@ $cell-background: #535353;
   }
 
   .index-tag {
-    min-width: 50px;
+    min-width: 48px;
+    font-size: 10px;
     text-align: center;
     color: variables.$black;
     background-color: $cell-background;
@@ -17,7 +18,8 @@ $cell-background: #535353;
   }
 
   .ant-table-cell {
-    padding: 4px 8px;
+    padding: 4px 4px;
+    font-size: 12px;
   }
 
   .ant-table-cell.ant-table-cell-fix-left {
@@ -28,5 +30,6 @@ $cell-background: #535353;
   .ant-table-thead > tr > th {
     color: variables.$light-green;
     background: $table-background;
+    font-size: 12px;
   }
 }
