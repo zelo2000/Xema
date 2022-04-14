@@ -5,18 +5,28 @@ import pandas as pd
 from kmodes.kmodes import KModes  # pip install kmodes
 from kneed import KneeLocator  # pip install kneed
 
-from constants import cluster_column_name
+from constants import cluster_column_name, labelled_column_name
 
-verbose = 0
+# 1 to show and 0 to hide
+verbose = 1
 
 
-def setup_kmodes(num_clusters: int) -> KModes:
+def setup_kmodes(num_clusters: int, data: pd.DataFrame) -> KModes:
     """
     Setup KModes
     :param num_clusters: amount of clusters
     :return: instance of KModes
     """
-    return KModes(n_clusters=num_clusters, init="Cao", n_init=5, verbose=verbose)
+    if num_clusters == 1:
+        indexes = [data.shape[0] // 2]
+    else:
+        r = list(range(0, data.shape[0]))
+        chunks = [r[i:i + data.shape[0] // num_clusters] for i in range(0, len(r), data.shape[0] // num_clusters)]
+        indexes = [chunks[i][len(chunks[i]) // 2] for i in range(0, len(chunks))]
+        indexes = np.resize(indexes, num_clusters)
+
+    centroids = data.iloc[indexes, :].values
+    return KModes(n_clusters=num_clusters, init=centroids, n_init=5, verbose=verbose)
 
 
 def build_elbow_curve(data: pd.DataFrame) -> tuple[range, list[int]]:
@@ -28,7 +38,7 @@ def build_elbow_curve(data: pd.DataFrame) -> tuple[range, list[int]]:
     cost = []
     cluster_amount_range = range(1, data.shape[0])
     for num_clusters in list(cluster_amount_range):
-        kmodes = setup_kmodes(num_clusters)
+        kmodes = setup_kmodes(num_clusters, data)
         kmodes.fit_predict(data)
         cost.append(kmodes.cost_)
 
@@ -69,7 +79,7 @@ def get_clusters_for_optimal_model(data: pd.DataFrame, cluster_amount: int) -> n
     :param data: data to be clustered
     :return: list of cluster number for each data row
     """
-    kmodes = setup_kmodes(cluster_amount)
+    kmodes = setup_kmodes(cluster_amount, data)
     clusters = kmodes.fit_predict(data)
     return clusters
 
@@ -82,7 +92,9 @@ def format_response(data: pd.DataFrame, clusters: npt.NDArray[np.uint16]) -> pd.
     :return: json with clustered data
     """
     data.insert(0, cluster_column_name, clusters, True)
-    data = data.sort_values(by=[cluster_column_name])
+    data = data.reset_index()
+    data = data.sort_values(by=[cluster_column_name, labelled_column_name])
+    data = data.set_index(labelled_column_name)
     return data
 
 

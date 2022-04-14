@@ -108,9 +108,22 @@ namespace Xema.ClusterAPI
                 crossInhibitionIndexes[clusterIndex].Add(row);
             }
 
+            var antigenLabelsResult = new List<List<string>>();
+            var skip = 0;
+            foreach (var clusterIndexes in crossInhibitionIndexes)
+            {
+                var labelByCluster = antigenLabels
+                    .Skip(skip)
+                    .Take(clusterIndexes.Count)
+                    .ToList();
+
+                antigenLabelsResult.Add(labelByCluster);
+                skip += clusterIndexes.Count;
+            }
+
             var result = new CrossInhibitorRawDataModel
             {
-                AntigenLabels = antigenLabels,
+                AntigenLabels = antigenLabelsResult,
                 MarkedAntigenLabels = markedAntigenLabels,
                 Clusters = clusters,
                 CrossInhibitionIndexes = crossInhibitionIndexes

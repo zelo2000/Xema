@@ -20,11 +20,11 @@ const CrossInhibitionGrid: FC<ICrossInhibitionGridProps> = ({ data }: ICrossInhi
   return (
     <>
       <Typography.Title level={4}>Cross inhibition data</Typography.Title>
-      {parseResult?.crossInhibitionIndexes.map(crossInhibitionIndex => (
+      {parseResult?.crossInhibitionIndexes.map((crossInhibition, index) => (
         <Row justify="center" className='cross-inhibition-grid-item-container'>
           <CrossInhibitionGridItem
-            crossInhibitionIndexes={crossInhibitionIndex}
-            antigenLabels={parseResult?.antigenLabels}
+            crossInhibitionIndexes={crossInhibition}
+            antigenLabels={parseResult?.antigenLabels[index]}
             markedAntigenLabels={parseResult?.markedAntigenLabels}
           />
         </Row>
