@@ -17,16 +17,17 @@ def setup_kmodes(num_clusters: int, data: pd.DataFrame) -> KModes:
     :param num_clusters: amount of clusters
     :return: instance of KModes
     """
-    if num_clusters == 1:
-        indexes = [data.shape[0] // 2]
-    else:
-        r = list(range(0, data.shape[0]))
-        chunks = [r[i:i + data.shape[0] // num_clusters] for i in range(0, len(r), data.shape[0] // num_clusters)]
-        indexes = [chunks[i][len(chunks[i]) // 2] for i in range(0, len(chunks))]
-        indexes = np.resize(indexes, num_clusters)
-
-    centroids = data.iloc[indexes, :].values
-    return KModes(n_clusters=num_clusters, init=centroids, n_init=5, verbose=verbose)
+    # if num_clusters == 1:
+    #     indexes = [data.shape[0] // 2]
+    # else:
+    #     r = list(range(0, data.shape[0]))
+    #     chunks = [r[i:i + data.shape[0] // num_clusters] for i in range(0, len(r), data.shape[0] // num_clusters)]
+    #     indexes = [chunks[i][len(chunks[i]) // 2] for i in range(0, len(chunks))]
+    #     indexes = np.resize(indexes, num_clusters)
+    #
+    # centroids = data.iloc[indexes, :].values
+    # return KModes(n_clusters=num_clusters, init=centroids, n_init=5, verbose=verbose)
+    return KModes(n_clusters=num_clusters, init="random", n_init=5, verbose=verbose)
 
 
 def build_elbow_curve(data: pd.DataFrame) -> tuple[range, list[int]]:
@@ -105,6 +106,7 @@ def clustering(data: pd.DataFrame) -> pd.DataFrame:
     :return: json with clustered data
     """
     cluster_amount = get_optimal_cluster_amount(data)
+    print(f"Optimal cluster amount {cluster_amount}")
     clusters = get_clusters_for_optimal_model(data, cluster_amount)
     response = format_response(data, clusters)
     return response
