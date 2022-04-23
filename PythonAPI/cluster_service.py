@@ -27,7 +27,7 @@ def setup_kmodes(num_clusters: int, data: pd.DataFrame) -> KModes:
     #
     # centroids = data.iloc[indexes, :].values
     # return KModes(n_clusters=num_clusters, init=centroids, n_init=5, verbose=verbose)
-    return KModes(n_clusters=num_clusters, init="random", n_init=5, verbose=verbose)
+    return KModes(n_clusters=num_clusters, init="Cao", n_init=15, verbose=verbose)
 
 
 def build_elbow_curve(data: pd.DataFrame) -> tuple[range, list[int]]:
