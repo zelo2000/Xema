@@ -5,6 +5,7 @@ using Xema.ClusterAPI;
 using Xema.Core.Models.Configuration;
 using Xema.Services;
 using Xema.Services.Infrastructure;
+using Xema.Services.Provider;
 
 namespace Xema.WebApp
 {
@@ -14,7 +15,9 @@ namespace Xema.WebApp
         {
             services.AddClusterApi(configuration)
                 .AddTransient<ICrossInhibitionService, CrossInhibitonSevice>()
-                .AddTransient<IClusterApiClient, ClusterApiClient>();
+                .AddTransient<IClusterApiClient, ClusterApiClient>()
+                .AddTransient<IExcelService, ExcelService>()
+                .AddTransient<IStyleProvider, StyleProvider>();
 
             return services;
         }

@@ -1,9 +1,11 @@
 import { FC, useCallback, useState } from 'react';
-import { Button, Upload, message, Typography, Empty } from 'antd';
+import { Button, Upload, message, Typography, Empty, Row, Col } from 'antd';
 import { RcFile } from 'antd/lib/upload';
-import { UploadOutlined } from '@ant-design/icons';
+import { DownloadOutlined, UploadOutlined } from '@ant-design/icons';
+import { saveAs } from "file-saver";
+import moment from 'moment';
 
-import { uploadFileApi } from '../../api/cross-inhibition-api';
+import { exportXlsxApi, uploadFileApi } from '../../api/cross-inhibition-api';
 import { CrossInhibitonRawDataModel } from './../../types/cross-inhibiton-raw-data-model';
 import ClusterResult from './component/cluster-result/cluster-result';
 
@@ -16,14 +18,15 @@ interface ICrossInhibitionProps {
 
 const CrossInhibition: FC<ICrossInhibitionProps> = ({ setLoading }: ICrossInhibitionProps) => {
   const [parseResult, setParsedResult] = useState<CrossInhibitonRawDataModel>();
+  const [exportLoading, setExportLoading] = useState<boolean>(false);
 
   const handleSubmit = useCallback((value) => {
     setLoading(true);
     const formData = new FormData();
     formData.append('file', value.file);
 
-    uploadFileApi(formData).then(responce => {
-      setParsedResult(responce);
+    uploadFileApi(formData).then(response => {
+      setParsedResult(response);
       value.onSuccess();
       setLoading(false);
     }).catch((error) => {
@@ -32,8 +35,23 @@ const CrossInhibition: FC<ICrossInhibitionProps> = ({ setLoading }: ICrossInhibi
     });
   }, [setLoading]);
 
+  const onExport = useCallback(() => {
+    if (parseResult) {
+      setExportLoading(true);
+
+      exportXlsxApi(parseResult).then((response) => {
+        saveAs(new Blob([response.data]), `result-${moment().format("DD-MM-YYYY-HH-mm")}.xlsx`);
+        setExportLoading(false);
+      }
+      ).catch((error) => {
+        message.error(error);
+        setExportLoading(false);
+      });
+    }
+  }, [parseResult]);
+
   const beforeUpload = (file: RcFile) => {
-    const extensions = ['application/vnd.ms-excel', 'test/csv'];
+    const extensions = ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=utf-8', 'text/csv'];
     if (!extensions.includes(file.type)) {
       message.error(`${file.name} has not a valid file format`);
     }
@@ -43,20 +61,35 @@ const CrossInhibition: FC<ICrossInhibitionProps> = ({ setLoading }: ICrossInhibi
   return (
     <div>
       <div className="upload-container">
-        <div className='upload-header'>
-          <Typography.Title level={5}>Cross inhibition row data: </Typography.Title>
-        </div>
+        <Row align="middle" justify="space-between">
+          <Col>
+            <div className='upload-header'>
+              <Typography.Title level={5}>Cross inhibition row data: </Typography.Title>
+            </div>
 
-        <div>
-          <Upload
-            accept='.csv,.xls,.xlsx'
-            customRequest={handleSubmit}
-            beforeUpload={beforeUpload}
-            maxCount={1}
-          >
-            <Button type="primary" icon={<UploadOutlined />}>Click to upload file</Button>
-          </Upload>
-        </div>
+            <div>
+              <Upload
+                accept='.csv,.xls,.xlsx'
+                customRequest={handleSubmit}
+                beforeUpload={beforeUpload}
+                maxCount={1}
+              >
+                <Button type="primary" icon={<UploadOutlined />}>Click to upload file</Button>
+              </Upload>
+            </div>
+          </Col>
+          <Col>
+            <Button
+              type="primary"
+              icon={<DownloadOutlined />}
+              onClick={onExport}
+              loading={exportLoading}
+              disabled={!parseResult}
+            >
+              Export XLSX
+            </Button>
+          </Col>
+        </Row>
       </div>
 
       {

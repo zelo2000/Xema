@@ -34,7 +34,7 @@ const ClusterResult: FC<IClusterResultProps> = ({ data }: IClusterResultProps) =
           }}
           dataSource={localClusters}
           renderItem={(item, index) => (
-            <List.Item>
+            <List.Item key={`group-${index}`}>
               <Card
                 title={`Group ${toRoman(index + 1)}`}
                 className="cluster-result-card"

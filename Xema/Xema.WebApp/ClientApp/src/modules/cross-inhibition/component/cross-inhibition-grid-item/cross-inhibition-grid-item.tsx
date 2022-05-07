@@ -33,7 +33,7 @@ const CrossInhibitionGridItem: FC<ICrossInhibitionGridItemProps> = ({
           return (
             <Tag
               className="index-tag"
-              key={`${iIndex}-${jIndex}`}
+              key={`tag-${iIndex}-${jIndex}`}
               color={color}
             >
               {value?.value}

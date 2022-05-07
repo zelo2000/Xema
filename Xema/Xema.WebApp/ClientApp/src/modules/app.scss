@@ -32,6 +32,16 @@ h5.ant-typography {
   background-color: variables.$dark-green;
 }
 
+.ant-btn-primary[disabled] {
+  background-color: variables.$green;
+}
+
+.ant-btn-primary[disabled]:hover,
+.ant-btn-primary[disabled]:focus,
+.ant-btn-primary[disabled]:active {
+  background-color: variables.$dark-green;
+}
+
 [ant-click-animating-without-extra-node="true"]::after {
   display: none;
 }
