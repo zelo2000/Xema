@@ -17,5 +17,8 @@ namespace Xema.ClusterAPI.Models
 
         [JsonProperty("color")]
         public Dictionary<string, Dictionary<string, InhibitionColors>> Colors { get; set; }
+
+        [JsonProperty("wrong")]
+        public Dictionary<string, Dictionary<string, double>> Wrong { get; set; }
     }
 }

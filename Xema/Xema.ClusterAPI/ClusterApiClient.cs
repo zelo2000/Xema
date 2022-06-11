@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Xema.ClusterAPI.Models;
+using Xema.Core.Enums;
 using Xema.Core.Models;
 using Xema.Core.Models.Configuration;
 
@@ -60,31 +61,38 @@ namespace Xema.ClusterAPI
             var markedAntigenLabels = clusterResponce.Colors.FirstOrDefault().Value.Keys.ToList();
 
             // Map clusters
-            var clusters = new Dictionary<int, List<string>>();
+            var clusters = new Dictionary<string, List<string>>();
             foreach (var cluster in clusterResponce.Clusters)
             {
-                if (clusters.ContainsKey(cluster.Value))
+                var key = cluster.Value.ToString();
+                if (clusters.ContainsKey(key))
                 {
-                    clusters[cluster.Value].Add(cluster.Key);
+                    clusters[key].Add(cluster.Key);
 
-                    clusters[cluster.Value] = clusters[cluster.Value]
+                    clusters[key] = clusters[key]
                         .OrderBy(x => x)
                         .ToList();
                 }
                 else
                 {
-                    clusters.Add(cluster.Value, new List<string> { cluster.Key });
+                    clusters.Add(key, new List<string> { cluster.Key });
                 }
             }
 
-            // Map values
-            var crossInhibitionIndexes = new List<List<List<IndexCell>>>();
+            // Add wrong data cluster
+            if (clusterResponce.Wrong.Count > 0)
+            {
+                clusters["Unknown group"] = clusterResponce.Wrong.Keys.ToList();
+            }
 
+            // Create list
+            var crossInhibitionIndexes = new List<List<List<IndexCell>>>();
             foreach (var key in clusters.Keys)
             {
                 crossInhibitionIndexes.Add(new List<List<IndexCell>>());
             }
 
+            // Map values
             foreach (var antigenLabel in clusterResponce.Colors.Keys)
             {
                 var row = new List<IndexCell>();
@@ -108,6 +116,30 @@ namespace Xema.ClusterAPI
                 crossInhibitionIndexes[clusterIndex].Add(row);
             }
 
+            // Map wrong data
+            foreach (var antigenLabel in clusterResponce.Wrong.Keys)
+            {
+                var row = new List<IndexCell>();
+                foreach (var markedAntigenLabel in clusterResponce.Wrong[antigenLabel].Keys)
+                {
+                    var initialValue = clusterResponce.InitialValue[antigenLabel][markedAntigenLabel];
+                    var index = clusterResponce.Wrong[antigenLabel][markedAntigenLabel];
+
+                    var cell = new IndexCell
+                    {
+                        Value = initialValue,
+                        MarkerIndex = index,
+                        MarkerColor = InhibitionColors.None
+                    };
+
+                    row.Add(cell);
+                }
+
+                // Last cluster should be "Unknown group"
+                crossInhibitionIndexes[crossInhibitionIndexes.Count - 1].Add(row);
+            }
+
+            // Split lables by cluster
             var antigenLabelsResult = new List<List<string>>();
             var skip = 0;
             foreach (var clusterIndexes in crossInhibitionIndexes)
@@ -119,6 +151,12 @@ namespace Xema.ClusterAPI
 
                 antigenLabelsResult.Add(labelByCluster);
                 skip += clusterIndexes.Count;
+            }
+
+            // Add wrong data antigenLabels
+            if (clusterResponce.Wrong.Count > 0)
+            {
+                antigenLabelsResult[antigenLabelsResult.Count - 1] = clusterResponce.Wrong.Keys.ToList();
             }
 
             var result = new CrossInhibitorRawDataModel

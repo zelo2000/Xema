@@ -10,11 +10,11 @@ interface IClusterResultProps {
 }
 
 const ClusterResult: FC<IClusterResultProps> = ({ data }: IClusterResultProps) => {
-  const [localClusters, setClusters] = useState<string[][]>();
+  const [localClusters, setClusters] = useState<[string, string[]][]>();
 
   useEffect(() => {
     if (data) {
-      setClusters(Object.values(data));
+      setClusters(Object.entries(data));
     }
   }, [data]);
 
@@ -33,16 +33,19 @@ const ClusterResult: FC<IClusterResultProps> = ({ data }: IClusterResultProps) =
             xxl: 3,
           }}
           dataSource={localClusters}
-          renderItem={(item, index) => (
-            <List.Item key={`group-${index}`}>
-              <Card
-                title={`Group ${toRoman(index + 1)}`}
-                className="cluster-result-card"
-              >
-                {item.join(', ')}
-              </Card>
-            </List.Item>
-          )}
+          renderItem={(item, index) => {
+            const groupTitle = Number.isNaN(parseInt(item[0])) ? item[0] : `Group ${toRoman(parseInt(item[0]) + 1)}`;
+            return (
+              <List.Item key={`card-group-${index}`}>
+                <Card
+                  title={groupTitle}
+                  className="cluster-result-card"
+                >
+                  {item[1].join(', ')}
+                </Card>
+              </List.Item>
+            );
+          }}
         />
       </Row>
     </>

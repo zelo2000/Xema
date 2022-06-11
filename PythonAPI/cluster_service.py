@@ -5,7 +5,7 @@ import pandas as pd
 from kmodes.kmodes import KModes  # pip install kmodes
 from kneed import KneeLocator  # pip install kneed
 
-from constants import cluster_column_name, labelled_column_name
+from constants import CLUSTER_COLUMN_NAME, LABELLED_COLUMN_NAME
 
 # 1 to show and 0 to hide
 verbose = 1
@@ -27,7 +27,7 @@ def setup_kmodes(num_clusters: int, data: pd.DataFrame) -> KModes:
     #
     # centroids = data.iloc[indexes, :].values
     # return KModes(n_clusters=num_clusters, init=centroids, n_init=5, verbose=verbose)
-    return KModes(n_clusters=num_clusters, init="Cao", n_init=15, verbose=verbose)
+    return KModes(n_clusters=num_clusters, init="Cao", n_init=5, verbose=verbose)
 
 
 def build_elbow_curve(data: pd.DataFrame) -> tuple[range, list[int]]:
@@ -92,10 +92,10 @@ def format_response(data: pd.DataFrame, clusters: npt.NDArray[np.uint16]) -> pd.
     :param clusters: list of cluster number for each data row
     :return: json with clustered data
     """
-    data.insert(0, cluster_column_name, clusters, True)
+    data.insert(0, CLUSTER_COLUMN_NAME, clusters, True)
     data = data.reset_index()
-    data = data.sort_values(by=[cluster_column_name, labelled_column_name])
-    data = data.set_index(labelled_column_name)
+    data = data.sort_values(by=[CLUSTER_COLUMN_NAME, LABELLED_COLUMN_NAME])
+    data = data.set_index(LABELLED_COLUMN_NAME)
     return data
 
 

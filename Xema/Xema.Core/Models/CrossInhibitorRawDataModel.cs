@@ -10,6 +10,6 @@ namespace Xema.Core.Models
 
         public List<List<List<IndexCell>>> CrossInhibitionIndexes { get; set; }
 
-        public Dictionary<int, List<string>> Clusters { get; set; }
+        public Dictionary<string, List<string>> Clusters { get; set; }
     }
 }
