@@ -15,7 +15,8 @@
 
   .ant-card-body {
     color: variables.$white;
-    height: 7rem;
+    height: auto;
+    min-height: 5rem;
     padding: 12px 24px 12px 24px;
   }
 }

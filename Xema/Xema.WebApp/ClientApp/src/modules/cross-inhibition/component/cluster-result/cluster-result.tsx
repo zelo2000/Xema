@@ -20,7 +20,7 @@ const ClusterResult: FC<IClusterResultProps> = ({ data }: IClusterResultProps) =
 
   return (
     <>
-      <Typography.Title level={4}>Antigen by groups</Typography.Title>
+      <Typography.Title level={4}>Антитіла по групах</Typography.Title>
       <Row>
         <List
           grid={{

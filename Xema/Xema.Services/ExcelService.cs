@@ -32,7 +32,14 @@ namespace Xema.Services
             // Add clusters to file
             foreach (var keyValue in dataModel.Clusters)
             {
-                sl.SetCellValue(rowIndex, columnIndex, $"Group {keyValue.Key + 1}");
+                var isInt = int.TryParse(keyValue.Key, out var number);
+                var label = keyValue.Key;
+                if (isInt)
+                {
+                    label = $"Group {number + 1}";
+                }
+
+                sl.SetCellValue(rowIndex, columnIndex, label);
                 sl.SetCellStyle(rowIndex, columnIndex, groupHeaderStyle);
 
                 rowIndex++;
@@ -74,7 +81,15 @@ namespace Xema.Services
             columnIndex = 1;
             for (var i = 0; i < dataModel.AntigenLabels.Count; i++)
             {
-                sl.SetCellValue(rowIndex, columnIndex, $"Group {i + 1}");
+                var keyValue = dataModel.Clusters.ElementAt(i);
+                var isInt = int.TryParse(keyValue.Key, out var number);
+                var groupLabel = keyValue.Key;
+                if (isInt)
+                {
+                    groupLabel = $"Group {number + 1}";
+                }
+
+                sl.SetCellValue(rowIndex, columnIndex, groupLabel);
                 columnIndex++;
 
                 var labelGroup = dataModel.AntigenLabels[i];

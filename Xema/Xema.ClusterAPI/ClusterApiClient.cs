@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Xema.ClusterAPI.Models;
+using Xema.Core.Constants;
 using Xema.Core.Enums;
 using Xema.Core.Models;
 using Xema.Core.Models.Configuration;
@@ -82,7 +83,7 @@ namespace Xema.ClusterAPI
             // Add wrong data cluster
             if (clusterResponce.Wrong.Count > 0)
             {
-                clusters["Unknown group"] = clusterResponce.Wrong.Keys.ToList();
+                clusters[ClusterLabel.UnknownGroup] = clusterResponce.Wrong.Keys.ToList();
             }
 
             // Create list

@@ -19,7 +19,7 @@ const CrossInhibitionGrid: FC<ICrossInhibitionGridProps> = ({ data }: ICrossInhi
 
   return (
     <>
-      <Typography.Title level={4}>Cross inhibition data</Typography.Title>
+      <Typography.Title level={4}>Матриця перехресного зв'язування</Typography.Title>
       {parseResult?.crossInhibitionIndexes.map((crossInhibition, index) => (
         <Row justify="center" className='cross-inhibition-grid-item-container' key={`grid-${index}`} >
           <CrossInhibitionGridItem

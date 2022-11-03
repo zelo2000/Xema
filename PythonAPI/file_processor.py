@@ -36,7 +36,7 @@ def processFile(data: pd.DataFrame) -> dict[str, pd.DataFrame]:
     for column_name in data_color.columns.values.tolist():
         data_color[column_name] = data_color[column_name].apply(color_setter)
 
-    data_to_cluster = data_color[~(data_color == 1).all(axis=1)]
+    data_to_cluster = data_color[~(data_color == 1).all(axis=1)] # Remove all rows where value is 1
     wrong_data = data_color[(data_color == 1).all(axis=1)]
 
     return {
