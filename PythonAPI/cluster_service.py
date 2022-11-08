@@ -1,112 +1,81 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import numpy.typing as npt
 import pandas as pd
-from kmodes.kmodes import KModes  # pip install kmodes
 from kneed import KneeLocator  # pip install kneed
 
 from constants import CLUSTER_COLUMN_NAME, LABELLED_COLUMN_NAME
 
-# 1 to show and 0 to hide
-verbose = 1
+from scipy.cluster.hierarchy import dendrogram
+from sklearn.cluster import AgglomerativeClustering
 
 
-def setup_kmodes(num_clusters: int, data: pd.DataFrame) -> KModes:
-    """
-    Setup KModes
-    :param num_clusters: amount of clusters
-    :return: instance of KModes
-    """
-    # if num_clusters == 1:
-    #     indexes = [data.shape[0] // 2]
-    # else:
-    #     r = list(range(0, data.shape[0]))
-    #     chunks = [r[i:i + data.shape[0] // num_clusters] for i in range(0, len(r), data.shape[0] // num_clusters)]
-    #     indexes = [chunks[i][len(chunks[i]) // 2] for i in range(0, len(chunks))]
-    #     indexes = np.resize(indexes, num_clusters)
-    #
-    # centroids = data.iloc[indexes, :].values
-    # return KModes(n_clusters=num_clusters, init=centroids, n_init=5, verbose=verbose)
-    return KModes(n_clusters=num_clusters, init="Cao", n_init=5, verbose=verbose)
+def plot_dendrogram(model, **kwargs):
+    # Створення матриці зв'язку і побудова дендрограми
 
+    # Обрахунок кількості точок під кожною вершиною
+    counts = np.zeros(model.children_.shape[0])
+    n_samples = len(model.labels_)
+    for i, merge in enumerate(model.children_):
+        current_count = 0
+        for child_idx in merge:
+            if child_idx < n_samples:
+                current_count += 1  # Вершина листок
+            else:
+                current_count += counts[child_idx - n_samples]
+        counts[i] = current_count
 
-def build_elbow_curve(data: pd.DataFrame) -> tuple[range, list[int]]:
-    """
-    Build Elbow curve to find optimal cluster amount
-    :param data: data to be clustered
-    :return: range from 1 to max amount of clusters, cost of each clustered model
-    """
-    cost = []
-    cluster_amount_range = range(1, data.shape[0])
-    for num_clusters in list(cluster_amount_range):
-        kmodes = setup_kmodes(num_clusters, data)
-        kmodes.fit_predict(data)
-        cost.append(kmodes.cost_)
+    linkage_matrix = np.column_stack(
+        [model.children_, model.distances_, counts]).astype(float)
 
-    if verbose == 1:
-        build_elbow_plot(cluster_amount_range, cost)
-    return cluster_amount_range, cost
-
-
-def build_elbow_plot(cluster_amount_range: range, cost: list[int]):
-    """
-    Build and show Elbow curve plot
-    :param cluster_amount_range: range from 1 to max amount of clusters
-    :param cost: cost of clustering
-    """
-    plt.plot(cluster_amount_range, cost, 'o-', color="blue", markerfacecolor='red', markeredgecolor='red')
-    plt.xlabel('No. of clusters')
-    plt.ylabel('Cost')
-    plt.title('Elbow Method For Optimal k')
+    # Побудова дендрограми
+    dendrogram(linkage_matrix, **kwargs)
     plt.show()
 
 
-def get_optimal_cluster_amount(data: pd.DataFrame) -> int:
-    """
-    Get exact cluster amount
-    :param data: data to be clustered
-    :return: optimal cluster amount base on elbow method
-    """
-    cluster_amount_range, cost = build_elbow_curve(data)
-    kl = KneeLocator(cluster_amount_range, cost, curve="convex", direction="decreasing")
-    exact_cluster_amount = kl.elbow
-    return exact_cluster_amount
+def get_optimal_distance(distances, dist_method):
+    # Знаходження оптимальної відстані
+    K = range(0, len(distances))
+    kl = KneeLocator(K, distances, curve="convex", direction="increasing", interp_method=dist_method)
+
+    best_k = kl.elbow
+    threshold = distances[best_k]
+
+    # Побудова графіка
+    ax1 = plt.axes()
+    ax1.plot(distances)
+    ax1.scatter(best_k, threshold, s=80, facecolors='none', edgecolors='r', linewidths=2)
+    plt.show()
+
+    print(threshold)
+
+    return threshold
 
 
-def get_clusters_for_optimal_model(data: pd.DataFrame, cluster_amount: int) -> npt.NDArray[np.uint16]:
-    """
-    Build optimal model with 'cluster_amount' clusters
-    :param cluster_amount: cluster amount
-    :param data: data to be clustered
-    :return: list of cluster number for each data row
-    """
-    kmodes = setup_kmodes(cluster_amount, data)
-    clusters = kmodes.fit_predict(data)
-    return clusters
+def clastering(data, method, threshold):
+    if threshold is None:
+        clustering = AgglomerativeClustering(linkage=method, compute_distances=True)
+    else:
+        clustering = AgglomerativeClustering(linkage=method, n_clusters=None, distance_threshold=threshold)
+    result = clustering.fit(data)
+    return (clustering, result.distances_, result.labels_)
 
 
-def format_response(data: pd.DataFrame, clusters: npt.NDArray[np.uint16]) -> pd.DataFrame:
-    """
-    Format response data
-    :param data: data to be clustered
-    :param clusters: list of cluster number for each data row
-    :return: json with clustered data
-    """
-    data.insert(0, CLUSTER_COLUMN_NAME, clusters, True)
-    data = data.reset_index()
-    data = data.sort_values(by=[CLUSTER_COLUMN_NAME, LABELLED_COLUMN_NAME])
-    data = data.set_index(LABELLED_COLUMN_NAME)
-    return data
+def hierarchical(data, method, dist_method, title):
+    (clustering, distances, labels) = clastering(data, method, None)
+    threshold = get_optimal_distance(distances, dist_method)
+    (clustering, distances, labels) = clastering(data, method, threshold)
+
+    data_index_copy = data.copy(deep=True)
+    data_index_clusterize = data_index_copy
+    data_index_clusterize.insert(0, CLUSTER_COLUMN_NAME, labels, True)
+    data_index_clusterize = data_index_clusterize.sort_values(by=[CLUSTER_COLUMN_NAME, LABELLED_COLUMN_NAME])
+
+    plt.title(title, size=18)
+    plot_dendrogram(clustering, labels=data_index_copy.index, truncate_mode="level",
+                    p=data_index_copy.shape[0], color_threshold=threshold)
+
+    return data_index_clusterize
 
 
 def clustering(data: pd.DataFrame) -> pd.DataFrame:
-    """
-    Clustering data
-    :param data: data to be clustered
-    :return: json with clustered data
-    """
-    cluster_amount = get_optimal_cluster_amount(data)
-    print(f"Optimal cluster amount {cluster_amount}")
-    clusters = get_clusters_for_optimal_model(data, cluster_amount)
-    response = format_response(data, clusters)
-    return response
+    return hierarchical(data, "ward", 'polynomial', "Ward Linkage")

@@ -19,7 +19,7 @@ async def root():
 async def api_clustering(file: UploadFile):
     data_color = read_data_from_file(file)
     data = processFile(data_color)
-    clustered_data = clustering(data[DICTIONARY_COLOR].copy(deep=True))
+    clustered_data = clustering(data[DICTIONARY_INDEX].copy(deep=True))
     response = prepare_response(data, clustered_data)
     return response
 
@@ -33,12 +33,12 @@ def read_data_from_file(file: UploadFile) -> pd.DataFrame:
 
 def prepare_response(data: dict[str, pd.DataFrame], clustered: pd.DataFrame) -> dict[str, dict]:
     data_filtered = data[DICTIONARY_INITIAL].to_dict(orient="index")
-    data_index = data[DICTIONARY_INDEX].to_dict(orient="index")
+    data_color = data[DICTIONARY_COLOR].to_dict(orient="index")
     data_wrong = data[DICTIONARY_WRONG].to_dict(orient="index")
 
     clusters = clustered.iloc[:, 0].to_dict()
 
-    data_color = clustered.drop(CLUSTER_COLUMN_NAME, axis=1).to_dict(orient="index")
+    data_index = clustered.drop(CLUSTER_COLUMN_NAME, axis=1).to_dict(orient="index")
 
     response = {
         DICTIONARY_CLUSTERS: clusters,
